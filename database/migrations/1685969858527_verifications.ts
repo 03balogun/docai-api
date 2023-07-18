@@ -1,0 +1,24 @@
+import BaseSchema from '@ioc:Adonis/Lucid/Schema'
+
+export default class Activations extends BaseSchema {
+  protected tableName = 'verifications'
+
+  public async up() {
+    this.schema.createTable(this.tableName, (table) => {
+      table.uuid('id').primary()
+
+      table.uuid('user_id').references('id').inTable('users').onDelete('CASCADE').nullable()
+      table.string('mode').defaultTo('email').comment('How code is being sent e.g email, phone')
+      table.string('code', 10).unique()
+      table.datetime('expires_at')
+      table.datetime('completed_at').nullable()
+
+      table.timestamp('created_at', { useTz: true })
+      table.timestamp('updated_at', { useTz: true })
+    })
+  }
+
+  public async down() {
+    this.schema.dropTable(this.tableName)
+  }
+}
